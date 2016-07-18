@@ -121,7 +121,7 @@
 
 		<div class="main-gallery container-fluid">
 			<div class="gallery-cell">
-				<div id="weather-cell" class="container-fluid">
+				<div id="weather-cell" class="container">
 
 					<?php include('inc/weather.display.inc.php'); ?>
 
