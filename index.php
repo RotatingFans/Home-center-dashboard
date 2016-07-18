@@ -129,6 +129,9 @@
 				</div>
 			</div>
 			<div class="gallery-cell">
+				<?php include('inc/dashboard.display.inc.php'); ?>
+			</div>
+			<div class="gallery-cell">
 				<?php include('inc/status.inc.php'); ?>
 			</div>
 			<div class="gallery-cell">
