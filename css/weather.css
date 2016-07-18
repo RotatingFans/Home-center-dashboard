@@ -1,0 +1,17 @@
+.day, .hour {
+	margin-left: auto;
+	margin-right: auto;
+	padding: 20px;
+}
+#tempHigh {
+	font-size: 1.67em;
+	font-weight: 800;
+}
+#tempLow {
+	font-size: 1.2em;
+	font-weight: 500;
+}
+#feelsLikeText {
+	font-size: 1.2em;
+	font-weight: 500;
+}

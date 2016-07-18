@@ -1,0 +1,4 @@
+var weatherSettings = {
+	apiKey: "",
+	location: ""
+};

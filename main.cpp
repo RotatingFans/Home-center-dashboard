@@ -1,0 +1,327 @@
+#include <mysql/mysql.h>
+#include <cstdlib>
+#include <iostream>
+#include <RF24/RF24.h>
+#include <string>
+
+using namespace std;
+
+// Radio pipe addresses for the 2 nodes to communicate.
+// First pipe is for writing, 2nd, 3rd, 4th, 5th & 6th is for reading...
+const uint64_t pipes[2] = { 0xF0F0F0F0E1LL,0xF0F0F0F0D2LL };
+/* TABLE STRUCTURE
+CREATE TABLE IF NOT EXISTS `sensor_log` (
+`ID` int(11) NOT NULL,
+  `nodeID` int(11) NOT NULL,
+  `temp` float NOT NULL,
+  `voltage` float NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE `sensor_log`
+ ADD PRIMARY KEY (`ID`), ADD KEY `ID` (`ID`);
+
+ALTER TABLE `sensor_log`
+MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+*/
+#define DATABASE_NAME		"sensorLog"
+#define DATABASE_USERNAME	"sensorLog"
+#define DATABASE_PASSWORD	"Qq$Q8ax&@SB2eZQ"
+MYSQL *mysql1;
+int failover = 0;
+int writeFailover = 0;
+// Setup for GPIO 22 CE and CE1 CSN with SPI Speed @ 8Mhz
+RF24 radio(RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_24, BCM2835_SPI_SPEED_8MHZ);  
+//*****************************************
+//*****************************************
+//********** CONNECT TO DATABASE **********
+//*****************************************
+//*****************************************
+void mysql_connect (void)
+{
+    //initialize MYSQL object for connections
+	mysql1 = mysql_init(NULL);
+
+    if(mysql1 == NULL)
+    {
+        fprintf(stderr, "%s\n", mysql_error(mysql1));
+        return;
+    }
+    FILE *p = popen("ping 192.168.1.200", "r");
+    if (p) {
+	    if (failover) {
+		writeFailover=1;
+		    failover=0;
+	    }
+	    //Connect to the database
+        if(mysql_real_connect(mysql1, "192.168.1.200", DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME, 0, NULL, 0) == NULL)
+        {
+        	fprintf(stderr, "%s\n", mysql_error(mysql1));
+        }
+        else
+        {
+	    printf("Database connection successful.\n");
+        }
+
+    }
+    else {
+	    //Connect to the database
+        if(mysql_real_connect(mysql1, "localhost", DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME, 0, NULL, 0) == NULL)
+        {
+        	fprintf(stderr, "%s\n", mysql_error(mysql1));
+        }
+        else
+        {
+	    printf("Database connection successful.\n");
+        }
+        failover = 1;
+    }
+    
+}
+
+
+
+//**********************************************
+//**********************************************
+//********** DISCONNECT FROM DATABASE **********
+//**********************************************
+//**********************************************
+void mysql_disconnect (void)
+{
+    mysql_close(mysql1);
+    printf( "Disconnected from database.\n");
+}
+
+void insertData(int nodeID, float temp, float humidity) {
+	mysql_connect();
+	if (writeFailover) {
+		MYSQL *mysqlL;
+		mysqlL = mysql_init(NULL);
+		if(mysql_real_connect(mysqlL, "localhost", DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME, 0, NULL, 0) == NULL)
+		{
+			fprintf(stderr, "%s\n", mysql_error(mysql1));
+		}
+		else
+		{
+		    printf("Database connection successful.\n");
+		}
+		MYSQL_STMT *sql_statement1;
+
+		bool sql_error = false;
+	
+
+		//Setup to create query
+		sql_statement1= mysql_stmt_init(mysqlL);
+		if (!sql_statement1)
+			sql_error = 1;
+
+	
+		//----- SET THE QUERY TEXT -----
+		#define SQL_QUERY_TEXT_1 "UNLOAD SELECT nodeID,temp,voltage,time FROM sensor_log INTO CLIENT FILE 'logData.csv' QUOTE '\"'"
+		if (mysql_stmt_prepare(sql_statement1, SQL_QUERY_TEXT_1, strlen(SQL_QUERY_TEXT_1)))
+				sql_error = 1;
+		if (!sql_error)
+		{
+			if (mysql_stmt_execute(sql_statement1))
+				sql_error = 1;
+		}
+
+		//If you want to get the number of affected rows
+		//my_ulonglong affected_rows = mysql_stmt_affected_rows(sql_statement1);
+		//if (affected_rows != 1)
+		//{
+		//	do something
+		//}
+
+		//IF YOU WANT TO GET THE VALUE GENERATED FOR AN AUTO_INCREMENT COLUMN IN THE PREVIOUS INSERT/UPDATE STATEMENT
+		//my_ulonglong sql_insert_id = mysql_stmt_insert_id(sql_statement1);
+
+		//If you want to do the query again then change any values you want to change and call mysql_stmt_execute(sql_statement1) again
+
+		//Close the statement
+		if (sql_statement1)
+		{
+			if (mysql_stmt_close(sql_statement1))
+				sql_error = 1;
+		}
+    		mysql_close(mysqlL);
+		
+
+		MYSQL_STMT *sql_statementS;
+
+		bool sql_error = false;
+	
+
+		//Setup to create query
+		sql_statementS= mysql_stmt_init(mysql1);
+		if (!sql_statementS)
+			sql_error = 1;
+
+	
+		//----- SET THE QUERY TEXT -----
+		#define SQL_QUERY_TEXT_LS "LOAD DATA LOCAL INFILE 'logData.csv' INTO TABLE sensor_log (nodeID,temp,voltage,time) ENCLOSED BY '\"'"
+		if (mysql_stmt_prepare(sql_statementS, SQL_QUERY_TEXT_LS, strlen(SQL_QUERY_TEXT_LS)))
+				sql_error = 1;
+		if (!sql_error)
+		{
+			if (mysql_stmt_execute(sql_statementS))
+				sql_error = 1;
+		}
+
+
+	}
+	MYSQL_STMT *sql_statement1;
+	MYSQL_BIND sql_bind_parameters1[3];
+	bool sql_error = false;
+	
+
+	//Setup to create query
+	sql_statement1= mysql_stmt_init(mysql1);
+	if (!sql_statement1)
+		sql_error = 1;
+
+	
+	//----- SET THE QUERY TEXT -----
+	#define SQL_QUERY_TEXT_1 "INSERT INTO sensor_log(nodeID,temp,voltage) \
+								VALUES(?,?,?)"
+	if (mysql_stmt_prepare(sql_statement1, SQL_QUERY_TEXT_1, strlen(SQL_QUERY_TEXT_1)))
+			sql_error = 1;
+
+	//----- SET THE QUERY PARAMETER VALUES -----
+	//If you want to know how many parameters are expected
+	//int param_count = mysql_stmt_param_count(sql_statement1);
+	
+	//Set the parameter values
+	memset(sql_bind_parameters1, 0, sizeof(sql_bind_parameters1));		//Reset the parameters memory to null
+
+	//Integer
+
+	sql_bind_parameters1[0].buffer_type = MYSQL_TYPE_LONG;
+	sql_bind_parameters1[0].buffer = (char*)&nodeID;		//<Note: this is a pointer!
+	sql_bind_parameters1[0].is_null = 0;
+	sql_bind_parameters1[0].length = 0;
+
+	//string
+
+
+	sql_bind_parameters1[1].buffer_type = MYSQL_TYPE_FLOAT;
+	sql_bind_parameters1[1].buffer = (char*)&temp;
+	sql_bind_parameters1[1].is_null = 0;
+	sql_bind_parameters1[1].length = 0;			//<Note: this is a pointer!
+
+	//smallint
+
+	my_bool is_null = 1;		//We'll store this as null in this example
+	sql_bind_parameters1[2].buffer_type = MYSQL_TYPE_FLOAT;
+	sql_bind_parameters1[2].buffer = (char*)&humidity;	//<Note: this is a pointer!
+	sql_bind_parameters1[2].is_null = 0;				//<Note: this is a pointer!
+	sql_bind_parameters1[2].length = 0;
+	
+	//Pointers are used in the bind parameters so that if you are say adding multiple rows you can use the same query setup with new values for each execute of it.
+	
+	//Bind the buffers
+	if (mysql_stmt_bind_param(sql_statement1, sql_bind_parameters1))
+		sql_error = 1;
+
+	//----- EXECUTE THE QUERY ------
+	if (!sql_error)
+	{
+		if (mysql_stmt_execute(sql_statement1))
+			sql_error = 1;
+	}
+
+	//If you want to get the number of affected rows
+	//my_ulonglong affected_rows = mysql_stmt_affected_rows(sql_statement1);
+	//if (affected_rows != 1)
+	//{
+	//	do something
+	//}
+
+	//IF YOU WANT TO GET THE VALUE GENERATED FOR AN AUTO_INCREMENT COLUMN IN THE PREVIOUS INSERT/UPDATE STATEMENT
+	//my_ulonglong sql_insert_id = mysql_stmt_insert_id(sql_statement1);
+
+	//If you want to do the query again then change any values you want to change and call mysql_stmt_execute(sql_statement1) again
+
+	//Close the statement
+	if (sql_statement1)
+	{
+		if (mysql_stmt_close(sql_statement1))
+			sql_error = 1;
+	}
+	mysql_disconnect();
+}
+
+int main(int argc, char** argv) 
+{
+	uint8_t len;
+
+        // Refer to RF24.h or nRF24L01 DS for settings
+        radio.begin();
+        //radio.enableDynamicPayloads();
+        radio.setAutoAck(1);
+        radio.setRetries(15,15);
+        radio.setDataRate(RF24_250KBPS);
+        radio.setPALevel(RF24_PA_MAX);
+        radio.setChannel(0x4c);
+        radio.setPayloadSize(32);
+
+
+	// Open 6 pipes for readings ( 5 plus pipe0, also can be used for reading )
+	radio.openWritingPipe(pipes[0]);
+	radio.openReadingPipe(1,pipes[1]);
+
+
+	//
+	// Start listening
+	//
+	radio.startListening();
+
+	//
+	// Dump the configuration of the rf unit for debugging
+	//
+	radio.printDetails();
+	
+	printf("Output below : \n");
+	delay(1);
+	
+	while(1)
+	{
+		char receivePayload[32];
+		uint8_t pipe = 1;
+		
+		// Start listening
+		radio.startListening();
+
+		if ( radio.available() ) 
+		{
+			len = radio.getDynamicPayloadSize();
+			radio.read( receivePayload, len );
+			string::size_type t;
+			string::size_type h;
+			// Display it on screen
+			printf("Recv: size=%i payload=%s pipe=%i",len,receivePayload,pipe);
+ 			string mystring = string(receivePayload);
+			t = mystring.find('T');
+   			string NodeS = mystring.substr(0,t);
+			h = mystring.find('H');
+   			string TempS = mystring.substr(t+1,h-1);
+
+   			string HumidS = mystring.substr(h+1);
+			cout << TempS << "\n";
+			// Send back payload to sender
+			radio.stopListening();
+			int ID = atoi(NodeS.c_str());
+			double Temp = ::atof(TempS.c_str());
+			double Humid = ::atof(HumidS.c_str());
+			printf("temp:%f",Temp);
+			insertData(ID,Temp,Humid);
+			
+		}
+
+		
+		delayMicroseconds(20);
+	}
+	
+	return 0;
+}
+
