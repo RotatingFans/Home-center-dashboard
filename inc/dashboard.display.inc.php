@@ -6,6 +6,10 @@
 
 		setInterval(updateLists, minutesToMilli(1));
 
+
+		window.dispatchEvent(new Event('resize'));
+
+
 	});
 
 	function minutesToMilli(minutes) {
@@ -21,7 +25,7 @@
 			var notesHtml = '<div class="row noteProjects">';
 			$.each(data.projects, function(i, project) {
 				if (isInArray(project.name, todoSettings.projectsToDisplay)) {
-					notesHtml = notesHtml + '<div class="col-xs-12 col-md-5 project"><h3 class="row col-md-12">' + project.name + '</h3><div class="notes">';
+					notesHtml = notesHtml + '<div class="col-xs-9 col-sm-5 project"><h3 class="row col-md-12">' + project.name + '</h3><div class="notes">';
 					$.each(data.items, function(noteIndex, note) {
 						if (note.project_id == project.id) {
 							if (note.checked) {

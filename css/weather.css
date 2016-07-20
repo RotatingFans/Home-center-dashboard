@@ -1,7 +1,11 @@
 .day, .hour {
 	margin-left: auto;
 	margin-right: auto;
-	padding: 20px;
+	/*	padding: 20px;*/
+}
+.radar {
+	width: 100%;
+	height: 200px;
 }
 #tempHigh {
 	font-size: 1.67em;
@@ -14,4 +18,14 @@
 #feelsLikeText {
 	font-size: 1.2em;
 	font-weight: 500;
+}
+#feelsLikeTemp {
+	font-size: 1.5em;
+	font-weight: 700;
+}
+.current_conditions {
+	width: auto;
+}
+.ConditionText {
+	text-align: center;
 }

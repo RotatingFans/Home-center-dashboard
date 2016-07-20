@@ -20,61 +20,79 @@ include_once('lib/sensors.php');
 			var options = {
 				chart: {
 					zoomType: 'x',
-					renderTo: 'graph_container'
-						/*,events: {
-						load: function() {
-						// set up the updating of the chart each minute
-						var series = this.series[0];
-						var series2 =  this.series[1];
-						var series3 = this.series[2];
-						setInterval(function() {
-						$.getJSON('lib/sensors.php?value=latest', function(data) {
-						// DHT22
-						series.addPoint([data[0][0],data[0][2]], true, true);
-						series2.addPoint([data[0][0],data[0][3]], true, true);
+					renderTo: 'graph_container',
+					spacingLeft: 0,
+					spacingRight: 0,
+					style: {
+						fontSize: '16px'
+
+					}
+					/*,events: {
+					load: function() {
+					// set up the updating of the chart each minute
+					var series = this.series[0];
+					var series2 =  this.series[1];
+					var series3 = this.series[2];
+					setInterval(function() {
+					$.getJSON('lib/sensors.php?value=latest', function(data) {
+					// DHT22
+					series.addPoint([data[0][0],data[0][2]], true, true);
+					series2.addPoint([data[0][0],data[0][3]], true, true);
 						
-						// Temp
-						series3.addPoint([data[1][0],data[1][2]], true, true);
-						 
-						})
-						}, 60000);
+					// Temp
+					series3.addPoint([data[1][0],data[1][2]], true, true);
+
+					})
+					}, 60000);
 						
-						}
-						}*/
+					}
+					}*/
 				},
 				yAxis: [{ // Primary yAxis
-					labels: {
+						labels: {
 
-						formatter: function() {
-							var val = this.value;
-							var valFloat = parseFloat(val);
-							return (valFloat * 1.8 + 32).toFixed(1) + '°F / ' + val.toFixed(1) + '°C';
+							formatter: function() {
+								var val = this.value;
+								var valFloat = parseFloat(val);
+								return (valFloat * 1.8 + 32).toFixed(1) + '°F / ' + val.toFixed(1) + '°C';
+							},
+							style: {
+								color: '#AA4643',
+								fontSize: '16px'
+							}
 						},
-						style: {
-							color: '#AA4643'
-						}
-					},
-					title: {
-						text: 'Temperature',
-						style: {
-							color: '#AA4643'
+						title: {
+							text: 'Temperature',
+							margin: 5,
+							style: {
+								color: '#AA4643',
+								fontSize: '16px'
+
+							}
 						}
 					}
-				}, { // Secondary yAxis
-					title: {
-						text: 'Humidity',
-						style: {
-							color: '#4572A7'
-						}
-					},
-					labels: {
-						format: '{value} %',
-						style: {
-							color: '#4572A7'
-						}
-					},
-					opposite: false
-				}],
+					//				}, { // Secondary yAxis
+					//					title: {
+					//						text: 'Humidity',
+					//						margin: 5,
+					//
+					//						style: {
+					//							color: '#4572A7',
+					//							fontSize: '16px'
+					//
+					//						}
+					//					},
+					//					labels: {
+					//						format: '{value} %',
+					//						style: {
+					//							color: '#4572A7',
+					//							fontSize: '16px'
+					//
+					//						}
+					//					},
+					//					opposite: false
+					//				}
+				],
 				xAxis: {
 					type: 'datetime'
 				},
@@ -106,50 +124,60 @@ include_once('lib/sensors.php');
 					}]
 				},
 				legend: {
-					enabled: true
+					enabled: true,
+					itemStyle: {
+						fontSize: '16px'
+
+					}
 				},
 				series: [{
-					name: 'Living Room Temp',
-					data: [],
-					color: '#AA4643',
-					tooltip: {
-						valueDecimals: 1,
-						valueSuffix: '°C'
+						name: 'Living Room Temp',
+						data: [],
+						color: '#AA4643',
+						tooltip: {
+							valueDecimals: 1,
+							valueSuffix: '°C'
+						}
+
+					},
+					//{
+					//					name: 'Living Room Humidity',
+					//					data: [],
+					//					yAxis: 1,
+					//					color: '#4572A7',
+					//					tooltip: {
+					//						valueDecimals: 1,
+					//						valueSuffix: '%'
+					//					}
+					//				},
+					{
+						name: 'Bedroom Temp',
+						data: [],
+						color: '#F44643',
+						tooltip: {
+							valueDecimals: 1,
+							valueSuffix: '°C'
+						}
+					},
+					//						 {
+					//					name: 'Bedroom Humidity',
+					//					data: [],
+					//					yAxis: 1,
+					//					color: '#2B92A7',
+					//					tooltip: {
+					//						valueDecimals: 1,
+					//						valueSuffix: '%'
+					//					}
+					//				},
+					{
+						name: 'Garage',
+						data: [],
+						tooltip: {
+							valueDecimals: 1,
+							valueSuffix: '°C'
+						}
 					}
-				}, {
-					name: 'Living Room Humidity',
-					data: [],
-					yAxis: 1,
-					color: '#4572A7',
-					tooltip: {
-						valueDecimals: 1,
-						valueSuffix: '%'
-					}
-				}, {
-					name: 'Bedroom Temp',
-					data: [],
-					color: '#F44643',
-					tooltip: {
-						valueDecimals: 1,
-						valueSuffix: '°C'
-					}
-				}, {
-					name: 'Bedroom Humidity',
-					data: [],
-					yAxis: 1,
-					color: '#2B92A7',
-					tooltip: {
-						valueDecimals: 1,
-						valueSuffix: '%'
-					}
-				}, {
-					name: 'Garage',
-					data: [],
-					tooltip: {
-						valueDecimals: 1,
-						valueSuffix: '°C'
-					}
-				}]
+				]
 			};
 
 			$('.button_showgraph').click(function() {

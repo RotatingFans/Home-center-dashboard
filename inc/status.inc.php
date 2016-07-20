@@ -44,14 +44,14 @@ foreach ($sysMemory as $index => $mem) {
     if ($index != (count($sysMemory) - 1)) {
 
         $data['sysMemory'] .= '
-            <tr>
-                <td>' . @htmlentities($mem['device'], ENT_QUOTES, 'UTF-8') . '</td>
-                <td>' . @htmlentities($mem['mountpoint'], ENT_QUOTES, 'UTF-8') . '</td>
-                <td>' . @htmlentities($mem['percent'], ENT_QUOTES, 'UTF-8') . '%</td>
-                <td>' . formatBytesBinary($mem['total']) . '</td>
-                <td>' . formatBytesBinary($mem['used']) . '</td>
-                <td>' . formatBytesBinary($mem['free']) . '</td>
-            </tr>';
+            <div class="row">
+                <div class="col-xs-2 storageRow">' . @htmlentities($mem['device'], ENT_QUOTES, 'UTF-8') . '</div>
+                <div class="col-xs-2 storageRow">' . @htmlentities($mem['mountpoint'], ENT_QUOTES, 'UTF-8') . '</div>
+                <div class="col-xs-2 storageRow">' . @htmlentities($mem['percent'], ENT_QUOTES, 'UTF-8') . '%</div>
+                <div class="col-xs-2 storageRow">' . formatBytesBinary($mem['total']) . '</div>
+                <div class="col-xs-2 storageRow">' . formatBytesBinary($mem['used']) . '</div>
+                <div class="col-xs-2 storageRow">' . formatBytesBinary($mem['free']) . '</div>
+            </div>';
     }
 }
 
@@ -61,12 +61,12 @@ $data['network'] = '';
 foreach ($network as $index => $net) {
 
     $data['network'] .= '
-            <tr>
-                <td>' . @htmlentities($net['name'], ENT_QUOTES, 'UTF-8') . '</td>
-                <td>' . formatBytesBinary($net['in']) . '</td>
-                <td>' . formatBytesBinary($net['out']) . '</td>
-                <td>' . number_format($net['errors'], 0, ',', '.') . '/' . number_format($net['drops'], 0, ',', '.') . '</td>
-            </tr>';
+            <div class="row">
+                <div class="col-xs-3 networkRow">' . @htmlentities($net['name'], ENT_QUOTES, 'UTF-8') . '</div>
+                <div class="col-xs-3 networkRow">' . formatBytesBinary($net['in']) . '</div>
+                <div class="col-xs-3 networkRow">' . formatBytesBinary($net['out']) . '</div>
+                <div class="col-xs-3 networkRow">' . number_format($net['errors'], 0, ',', '.') . '/' . number_format($net['drops'], 0, ',', '.') . '</div>
+            </div>';
 }
 ?>
 
@@ -124,19 +124,19 @@ foreach ($network as $index => $net) {
 			</div>
 			<hr>
 			<div class="row">
-				<div class="col-xs-6 col-sm-4 col-md-2" style="text-align: right">
+				<div class="col-xs-6 col-sm-2 col-md-2" style="text-align: right">
 					RAM:
 				</div>
-				<div class="col-xs-6  col-sm-8 col-md-10">
+				<div class="col-xs-6  col-sm-10 col-md-10">
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-sm-8">
 							<div class="progress">
 								<div class="progress-bar" role="progressbar" aria-valuenow="<?= $data['memoryPercentDisplay'] ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $data['memoryPercentDisplay'] ?>%;">
 									<span class="sr-only"><?= $data['memoryPercentDisplay'] ?>% Complete</span>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-sm-4">
 							(
 							<?= $data['memoryUsed'] ?> /
 								<?= $data['memoryTotal'] ?> )
@@ -145,19 +145,19 @@ foreach ($network as $index => $net) {
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-6 col-sm-4 col-md-2" style="text-align: right">
+				<div class="col-xs-6 col-sm-2 col-md-2" style="text-align: right">
 					SWAP:
 				</div>
-				<div class="col-xs-6  col-sm-8 col-md-10">
+				<div class="col-xs-6  col-sm-10 col-md-10">
 					<div class="row">
-						<div class="col-md-8">
+						<div class="col-sm-8">
 							<div class="progress">
 								<div class="progress-bar" role="progressbar" aria-valuenow="<?= $data['swapPercentDisplay'] ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?= $data['swapPercentDisplay'] ?>%;">
 									<span class="sr-only"><?= $data['swapPercentDisplay'] ?>% Complete</span>
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-sm-4">
 							(
 							<?= $data['swapUsed'] ?> /
 								<?= $data['swapTotal'] ?> )
@@ -173,21 +173,16 @@ foreach ($network as $index => $net) {
 		<div class="panel-body">
 
 			<div class="row">
-				<table class="table table-hover table-striped" id="no-more-tables">
-					<thead>
-						<tr>
-							<th>Partition</th>
-							<th>Mountpoint</th>
-							<th>Utilization</th>
-							<th>Overall</th>
-							<th>Used</th>
-							<th>Free</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-					<?= $data['sysMemory'] ?>
-				</table>
+				<div class="row">
+					<div class="col-xs-2 storageHead">Partition</div>
+					<div class="col-xs-2 storageHead">Mountpoint</div>
+					<div class="col-xs-2 storageHead">Utilization</div>
+					<div class="col-xs-2 storageHead">Overall</div>
+					<div class="col-xs-2 storageHead">Used</div>
+					<div class="col-xs-2 storageHead">Free</div>
+				</div>
+
+				<?= $data['sysMemory'] ?>
 
 			</div>
 		</div>
@@ -198,19 +193,13 @@ foreach ($network as $index => $net) {
 		<div class="panel-body">
 
 			<div class="row">
-				<table class="table table-hover table-striped" id="no-more-tables">
-					<thead>
-						<tr>
-							<th>Interface</th>
-							<th>Recieved</th>
-							<th>Sent</th>
-							<th>Error/Lost</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-					<?= $data['network'] ?>
-				</table>
+				<div class="row">
+					<div class="col-xs-3 networkHead">Interface</div>
+					<div class="col-xs-3 networkHead">Recieved</div>
+					<div class="col-xs-3 networkHead">Sent</div>
+					<div class="col-xs-3 networkHead">Error/Lost</div>
+				</div>
+				<?= $data['network'] ?>
 
 			</div>
 		</div>

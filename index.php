@@ -3,15 +3,17 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>WeckerPy</title>
-	<meta name="description" content="Control your Wecker" />
+	<title>HomeCenter</title>
+	<meta name="description" content="Control and know your home!" />
 	<meta name="keywords" lang="en" content="" />
-	<meta name="author" content="Tobias Haegenlaeuer">
-	<meta name="date" content="2013-11-14" />
+	<meta name="author" content="RotatingFans">
+	<meta name="date" content="2016-7-20" />
 	<meta name="robots" content="noindex,nofollow">
 	<meta http-equiv="content-language" content="en">
+	<meta name="viewport" content="height=device-height, initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
@@ -28,6 +30,7 @@
 	<link rel="stylesheet" type="text/css" href="css/flickity.css" />
 	<link rel="stylesheet" type="text/css" href="css/weather.css" />
 	<link rel="stylesheet" type="text/css" href="css/dash.css" />
+	<link rel="stylesheet" type="text/css" href="css/status.css" />
 
 
 
@@ -122,17 +125,23 @@
 
 		<div class="main-gallery container-fluid">
 			<div class="gallery-cell">
+				<?php include('inc/weather.display.inc.php'); ?>
+
+					<!--
 				<div id="weather-cell" class="container">
 
-					<?php include('inc/weather.display.inc.php'); ?>
 
 
 				</div>
+-->
 			</div>
 			<div class="gallery-cell">
-				<div id="dash-cell" class="container">
-					<?php include('inc/dashboard.display.inc.php'); ?>
-				</div>
+				<?php include('inc/dashboard.display.inc.php'); ?>
+
+					<!--
+<div id="dash-cell" class="container">
+</div>
+-->
 			</div>
 			<div class="gallery-cell">
 				<?php include('inc/status.inc.php'); ?>
@@ -161,13 +170,13 @@
 		<script src="https://npmcdn.com/flickity@2/dist/flickity.pkgd.js "></script>
 
 		<script type="application/javascript">
-			$(window).load(function() {
+			$(window).bind("load", function() {
 				$('.main-gallery').flickity({
 					// options
 					cellAlign: 'center',
 					wrapAround: true,
 					imagesLoaded: true,
-					initialIndex: 1
+					initialIndex: 1,
 				});
 				jQuery(document).ready(function($) {
 					$('#navbar a').on('click', function(event) {
