@@ -27,6 +27,7 @@
 	<link rel="stylesheet" type="text/css" href="css/colpick.css" />
 	<link rel="stylesheet" type="text/css" href="css/flickity.css" />
 	<link rel="stylesheet" type="text/css" href="css/weather.css" />
+	<link rel="stylesheet" type="text/css" href="css/dash.css" />
 
 
 
@@ -129,7 +130,9 @@
 				</div>
 			</div>
 			<div class="gallery-cell">
-				<?php include('inc/dashboard.display.inc.php'); ?>
+				<div id="dash-cell" class="container">
+					<?php include('inc/dashboard.display.inc.php'); ?>
+				</div>
 			</div>
 			<div class="gallery-cell">
 				<?php include('inc/status.inc.php'); ?>
@@ -164,7 +167,7 @@
 					cellAlign: 'center',
 					wrapAround: true,
 					imagesLoaded: true,
-					initialIndex: 0
+					initialIndex: 1
 				});
 				jQuery(document).ready(function($) {
 					$('#navbar a').on('click', function(event) {

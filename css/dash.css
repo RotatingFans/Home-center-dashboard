@@ -1,0 +1,37 @@
+.checkbox_checked, .checkbox_unchecked {
+	width: 40px;
+	height: 40px;
+}
+.noteText {
+	font-size: 2.75em;
+	font-weight: 700;
+}
+.vcenter {
+	display: inline-block;
+	vertical-align: middle;
+	float: none;
+}
+.editForm input {
+	padding: 6px 20px;
+	margin: 8px 0;
+	box-sizing: border-box;
+	border: 2px solid rgb(52, 73, 94);
+	background-color: white;
+	border-radius: 4px;
+	color: rgb(52, 73, 94);
+}
+.editForm button {
+	background-color: rgb(52, 73, 94);
+	border: none;
+	color: white;
+	padding: 16px 32px;
+	text-decoration: none;
+	margin: 4px 2px;
+	cursor: pointer;
+	width: 100% !important;
+}
+.project {
+	box-shadow: 5px 5px 2px #888888;
+	background-color: rgba(0, 0, 0, 0.04);
+	margin: 15px;
+}
