@@ -167,7 +167,7 @@
 -->
 
 		</div>
-		<script src="https://npmcdn.com/flickity@2/dist/flickity.pkgd.js "></script>
+		<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.js "></script>
 
 		<script type="application/javascript">
 			$(window).bind("load", function() {
